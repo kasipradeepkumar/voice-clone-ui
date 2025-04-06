@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceClone Storyteller - Kuku FM</title>
+  <style>
+    :root {
+      --primary: #FF6F61;
+      --secondary: #6C63FF;
+      --dark: #282828;
+      --light: #F8F8F8;
+      --gray: #888888;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+    }
+    
+    .app-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #fff;
+      height: 700px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .app-header {
+      background: var(--primary);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-weight: bold;
+      font-size: 20px;
+    }
+    
+    .app-content {
+      padding: 20px;
+      height: calc(100% - 60px);
+      overflow-y: auto;
+    }
+    
+    .feature-title {
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--dark);
+    }
+    
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      color: var(--gray);
+    }
+    
+    .tab.active {
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+      font-weight: bold;
+    }
+    
+    .voice-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .voice-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    
+    .voice-card.selected {
+      border: 2px solid var(--primary);
+    }
+    
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--secondary);
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    
+    .voice-info {
+      flex: 1;
+    }
+    
+    .voice-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    
+    .voice-type {
+      font-size: 12px;
+      color: var(--gray);
+    }
+    
+    .action-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 16px;
+      display: block;
+      width: 100%;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    
+    .action-button:hover {
+      background: #ff5c4d;
+    }
+    
+    .secondary-button {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+      display: block;
+      width: 100%;
+      font-size: 16px;
+    }
+    
+    .text-content {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px 0;
+      height: 200px;
+      width: 100%;
+      resize: none;
+      font-size: 14px;
+    }
+    
+    .upload-zone {
+      border: 2px dashed #ddd;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      margin: 20px 0;
+    }
+    
+    .upload-icon {
+      font-size: 30px;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+    
+    .recording-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .record-button {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: none;
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      cursor: pointer;
+    }
+    
+    .timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--dark);
+    }
+    
+    .preview-player {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+    
+    .play-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: white;
+      color: var(--dark);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+    
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress {
+      height: 100%;
+      width: 30%;
+      background: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    
+    .duration {
+      margin-left: 12px;
+      font-size: 12px;
+    }
+    
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: white;
+      border-top: 1px solid #eee;
+      padding: 12px 0;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 12px;
+      color: var(--gray);
+      cursor: pointer;
+    }
+    
+    .nav-item.active {
+      color: var(--primary);
+    }
+    
+    .nav-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    
+    .screen {
+      display: none;
+    }
+    
+    .screen.active {
+      display: block;
+    }
+    
+    .wave-animation {
+      display: flex;
+      align-items: flex-end;
+      height: 40px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    
+    .wave-bar {
+      width: 4px;
+      background: var(--primary);
+      margin: 0 2px;
+      border-radius: 2px;
+      animation: wave 1s infinite ease-in-out;
+    }
+    
+    .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 30px; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+    .wave-bar:nth-child(4) { animation-delay: 0.3s; height: 40px; }
+    .wave-bar:nth-child(5) { animation-delay: 0.4s; height: 25px; }
+    .wave-bar:nth-child(6) { animation-delay: 0.5s; height: 15px; }
+    .wave-bar:nth-child(7) { animation-delay: 0.6s; height: 35px; }
+    
+    @keyframes wave {
+      0%, 100% {
+        transform: scaleY(1);
+      }
+      50% {
+        transform: scaleY(0.5);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="app-header">
+      <div class="logo">Kuku FM</div>
+      <div>👤</div>
+    </div>
+    
+    <div class="app-content">
+      <div class="screen active" id="home-screen">
+        <h1 class="feature-title">VoiceClone Storyteller</h1>
+        
+        <div class="tab-container">
+          <div class="tab active">My Voices</div>
+          <div class="tab">Discover</div>
+        </div>
+        
+        <div class="voice-card selected">
+          <div class="avatar">M</div>
+          <div class="voice-info">
+            <div class="voice-name">My Voice</div>
+            <div class="voice-type">Personal • 5 min sample</div>
+          </div>
+          <div>✓</div>
+        </div>
+        
+        <div class="voice-card">
+          <div class="avatar" style="background: #4CAF50;">R</div>
+          <div class="voice-info">
+            <div class="voice-name">Rakesh (Narrator)</div>
+            <div class="voice-type">Professional • Popular</div>
+          </div>
+        </div>
+        
+        <div class="voice-card">
+          <div class="avatar" style="background: #9C27B0;">A</div>
+          <div class="voice-info">
+            <div class="voice-name">Anjali (Narrator)</div>
+            <div class="voice-type">Professional • Emotional</div>
+          </div>
+        </div>
+        
+        <div class="voice-card">
+          <div class="avatar" style="background: #FF9800;">D</div>
+          <div class="voice-info">
+            <div class="voice-name">Dad</div>
+            <div class="voice-type">Personal • 3 min sample</div>
+          </div>
+        </div>
+        
+        <button class="secondary-button">Create New Voice</button>
+        
+        <h3 style="margin-top: 24px; margin-bottom: 12px;">Create Audio Content</h3>
+        
+        <div class="upload-zone">
+          <div class="upload-icon">📄</div>
+          <div>Upload text file or paste URL</div>
+        </div>
+        
+        <textarea class="text-content" placeholder="Or type/paste your text here...">Once upon a time in a small village in India, there lived a young girl named Meera who loved stories more than anything else in the world. Every evening, she would gather the children of the village under the old banyan tree and narrate tales of brave warriors, cunning foxes, and magical kingdoms.</textarea>
+        
+        <button class="action-button">Convert to Audio</button>
+      </div>
+      
+      <div class="screen" id="record-screen">
+        <h1 class="feature-title">Record Your Voice</h1>
+        <p style="text-align: center; margin-bottom: 20px;">We need at least 3 minutes of clear speech to create your voice clone.</p>
+        
+        <div class="recording-container">
+          <button class="record-button">⏺</button>
+          <div class="timer">00:00</div>
+        </div>
+        
+        <div class="wave-animation">
+          <div class="wave-bar" style="height: 15px;"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+        
+        <div style="padding: 20px; background: #f5f5f5; border-radius: 12px; margin-bottom: 20px;">
+          <h3 style="margin-bottom: 10px;">Please read aloud:</h3>
+          <p>The quick brown fox jumps over the lazy dog. All human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.</p>
+        </div>
+        
+        <button class="action-button">Save Voice Sample</button>
+        <button class="secondary-button">Cancel</button>
+      </div>
+      
+      <div class="screen" id="preview-screen">
+        <h1 class="feature-title">Preview Your Audio</h1>
+        
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+          <div class="avatar">M</div>
+          <div class="voice-info">
+            <div class="voice-name">My Voice</div>
+            <div class="voice-type">Reading: My Story</div>
+          </div>
+        </div>
+        
+        <div class="preview-player">
+          <button class="play-button">▶</button>
+          <div class="progress-bar">
+            <div class="progress"></div>
+          </div>
+          <div class="duration">1:24</div>
+        </div>
+        
+        <div style="background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 20px; max-height: 120px; overflow-y: auto;">
+          <p style="font-size: 14px;"><strong>Reading text:</strong> Once upon a time in a small village in India, there lived a young girl named Meera who loved stories more than anything else in the world. Every evening, she would gather the children of the village under the old banyan tree and narrate tales of brave warriors, cunning foxes, and magical kingdoms.</p>
+        </div>
+        
+        <div style="margin-bottom: 24px;">
+          <h3 style="margin-bottom: 12px;">Adjust Voice Settings</h3>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div>Reading Speed</div>
+            <div style="width: 60%; background: #eee; height: 6px; border-radius: 3px; position: relative;">
+              <div style="position: absolute; width: 16px; height: 16px; background: var(--primary); border-radius: 50%; top: -5px; left: 40%;"></div>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div>Emotional Tone</div>
+            <div style="width: 60%; background: #eee; height: 6px; border-radius: 3px; position: relative;">
+              <div style="position: absolute; width: 16px; height: 16px; background: var(--primary); border-radius: 50%; top: -5px; left: 70%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="action-button">Save to Library</button>
+        <button class="secondary-button">Share Audio</button>
+      </div>
+      
+    </div>
+    
+    <div class="footer-nav">
+      <div class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div>Home</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🔍</div>
+        <div>Discover</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🎙️</div>
+        <div>Create</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📚</div>
+        <div>Library</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">👤</div>
+        <div>Profile</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
